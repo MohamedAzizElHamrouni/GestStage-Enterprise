@@ -1,201 +1,158 @@
-# Gestion des Stages Universitaires
-### Application Java Console — POO + MySQL JDBC
+# 🎓 GestStage — Système d'Information de Gestion des Stages
+
+[![Java](https://img.shields.io/badge/Java-11%2B-orange?style=for-the-badge&logo=openjdk)](https://www.oracle.com/java/)
+[![Maven](https://img.shields.io/badge/Build-Maven-C71A36?style=for-the-badge&logo=apachemaven)](https://maven.apache.org/)
+[![Database](https://img.shields.io/badge/Database-MySQL-4479A1?style=for-the-badge&logo=mysql)](https://www.mysql.com/)
+[![Architecture](https://img.shields.io/badge/Architecture-N--Tiers-blue?style=for-the-badge)]()
 
 ---
 
-## Description
+## 📌 Présentation
 
-Application console Java complète pour la gestion des stages universitaires. Aucune interface graphique, aucun framework web — pure Java POO avec persistance MySQL via JDBC.
-
----
-
-## Architecture du projet
-
-```
-java-internship-app/
-├── pom.xml                          # Configuration Maven + dépendances
-├── config.properties                # Configuration base de données
-├── sql/
-│   ├── schema.sql                   # Schéma complet (tables + vues)
-│   └── data_exemple.sql             # Données de test
-└── src/com/gestion/stages/
-    ├── Main.java                    # Point d'entrée
-    ├── config/
-    │   └── DatabaseConfig.java      # Connexion MySQL JDBC
-    ├── model/
-    │   ├── Utilisateur.java
-    │   ├── Etudiant.java
-    │   ├── Entreprise.java
-    │   ├── Encadrant.java
-    │   ├── OffreStage.java
-    │   ├── Candidature.java
-    │   ├── Stage.java
-    │   ├── LogConnexion.java
-    │   └── enums/
-    │       ├── Role.java            # ADMIN, ETUDIANT, ENTREPRISE, ENCADRANT
-    │       ├── NiveauEtude.java     # L1, L2, L3, M1, M2, DOCTORAT
-    │       ├── StatutStage.java
-    │       ├── StatutCandidature.java
-    │       └── StatutOffre.java
-    ├── dao/                         # Couche accès données (JDBC)
-    │   ├── UtilisateurDAO.java
-    │   ├── EtudiantDAO.java
-    │   ├── EntrepriseDAO.java
-    │   ├── EncadrantDAO.java
-    │   ├── OffreStageDAO.java
-    │   ├── CandidatureDAO.java
-    │   ├── StageDAO.java
-    │   └── LogConnexionDAO.java
-    ├── service/                     # Logique métier
-    │   ├── AuthService.java         # Authentification + protection brute force
-    │   ├── UtilisateurService.java
-    │   ├── EtudiantService.java
-    │   ├── OffreStageService.java
-    │   ├── CandidatureService.java
-    │   └── StageService.java
-    ├── ui/                          # Menus console
-    │   ├── MenuPrincipal.java       # Bannière + login
-    │   ├── MenuAdmin.java           # Toutes fonctions admin
-    │   ├── MenuEtudiant.java        # Espace étudiant
-    │   ├── MenuEntreprise.java      # Espace entreprise
-    │   └── MenuEncadrant.java       # Espace encadrant
-    └── util/
-        ├── PasswordUtils.java       # Hachage SHA-256 + sel
-        ├── ConsoleUtils.java        # Saisie, couleurs ANSI, affichage
-        └── ExportUtils.java         # Export PDF (iText) + CSV
-```
+**GestStage** est une application console Java modulaire basée sur une architecture en couches (DAO / Service / UI). Elle centralise et automatise l'ensemble du cycle de vie des stages académiques en interconnectant les **Étudiants**, les **Entreprises**, les **Encadrants** et les **Administrateurs**.
 
 ---
 
-## Prérequis
+## 🔥 Fonctionnalités Principales
 
-| Outil | Version minimale |
-|-------|-----------------|
-| JDK   | 11+             |
-| Maven | 3.6+            |
-| MySQL | 8.0+            |
+* 🔑 **Authentification Sécurisée** : Connexion par rôles (`ADMIN`, `ETUDIANT`, `ENTREPRISE`, `ENCADRANT`), hachage des mots de passe (`PasswordUtils`) et journalisation des accès (`LogConnexionDAO`).
+* 🎓 **Espace Étudiant** : Consultation du profil, recherche d'offres par niveau d'étude, postulation et suivi des candidatures.
+* 🏢 **Espace Entreprise** : Publication/gestion d'offres de stage, traitement des candidatures et suivi des stagiaires.
+* 👨‍🏫 **Espace Encadrant** : Suivi pédagogique des étudiants assignés et validation des conventions.
+* 🛠️ **Espace Administrateur** : Gestion globale des comptes, paramètres système et supervision.
+* 📄 **Exports PDF** : Génération automatique de bilans et de rapports officiels (`ExportUtils`).
 
 ---
 
-## Installation et lancement
+## 🏗️ Structure du Projet
 
-### 1. Préparer la base de données
+```text
+JavaC/
+├── 📜 pom.xml                       # Dépendances et build Maven[cite: 1]
+├── 📜 config.properties             # Paramètres de connexion SQL[cite: 1]
+├── 📂 sql/                          # Scripts SQL (schema.sql, data.sql)[cite: 1]
+└── 📂 src/main/java/com/gestion/stages/
+    ├── 🎬 Main.java                 # Point d'entrée de l'application[cite: 1]
+    ├── ⚙️ config/                    # DatabaseConfig (JDBC Singleton)[cite: 1]
+    ├── 🗄️ dao/                       # Interface d'accès aux données (JDBC)[cite: 1]
+    ├── ⚠️ exception/                 # Exceptions personnalisées[cite: 1]
+    ├── 📦 model/                    # Entités du domaine & Énumérations[cite: 1]
+    ├── 🧠 service/                  # Services métier & interfaces[cite: 1]
+    ├── 💻 ui/                       # Menus de la console interactifs[cite: 1]
+    └── 🛠️ util/                     # Console, Sécurité, Export PDF[cite: 1]
+⚙️ Prérequis & Installation
+1. Prérequis
+JDK 11 ou supérieur
 
-```sql
--- Dans MySQL:
-source sql/schema.sql;
-source sql/data_exemple.sql;   -- (optionnel, données de test)
-```
+Apache Maven 3.8+
 
-### 2. Configurer la connexion
+Serveur MySQL 8.0+
 
-Éditez `config.properties` :
+2. Configuration de la Base de Données
+Initialisez la base de données via les scripts fournis[cite: 1] :
 
-```properties
-db.url=jdbc:mysql://localhost:3306/gestion_stages?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-db.username=root
-db.password=VotreMotDePasse
-```
+Bash
+mysql -u root -p < sql/schema.sql
+mysql -u root -p < sql/data.sql
+Ajustez vos identifiants dans config.properties[cite: 1] :
 
-### 3. Compiler
+Properties
+db.url=jdbc:mysql://localhost:3306/gestion_stages
+db.user=root
+db.password=votre_mot_de_passe
+🚀 Exécution
+Bash
+# Compilation du projet
+mvn clean compile
 
+# Lancement de l'application
+mvn exec:java -Dexec.mainClass="com.gestion.stages.Main"
+Projet développé en Java avec architecture N-Tiers[cite: 1].
+
+
+---
+
+### 🔵 Option 2 : README Enterprise & Complet (Format Technique & Structure)
+
+```markdown
+# Application de Gestion des Stages (com.gestion.stages)
+
+## Description Technique
+Application Java Console conçue selon les principes de l'architecture N-Tiers découplée[cite: 1] :
+- **Couche Présentation (UI)** : Interfaces console adaptées aux rôles (`MenuAdmin`, `MenuEtudiant`, `MenuEntreprise`, `MenuEncadrant`)[cite: 1].
+- **Couche Service** : Logique métier abstraite par des interfaces (`IAuthService`, `ICandidatureService`, etc.)[cite: 1].
+- **Couche DAO** : Persistance relationnelle directe JDBC (`EtudiantDAO`, `OffreStageDAO`, `StageDAO`, etc.)[cite: 1].
+- **Sûreté & Sécurité** : Gestion des exceptions sur-mesure, salage/hachage des mots de passe et traçabilité des connexions[cite: 1].
+
+---
+
+## Rôles & Accès
+1. **Administrateur** : Supervision globale, gestion des utilisateurs, audit et rapports[cite: 1].
+2. **Étudiant** : Gestion du profil, postulation aux offres, consultation du statut de stage[cite: 1].
+3. **Entreprise** : Publication des offres de stage, revue des candidatures, gestion des candidats retenus[cite: 1].
+4. **Encadrant** : Suivi académique, évaluation et validation[cite: 1].
+
+---
+
+## Environnement & Stack
+- **Langage** : Java 11 / 17
+- **Gestionnaire de build** : Apache Maven
+- **Base de données** : MySQL / PostgreSQL
+- **Format d'exportation** : PDF (via `ExportUtils`)[cite: 1]
+
+---
+
+## Guide de Démarrage Rapide
+
+### 1. Base de données
 ```bash
+mysql -u root -p < sql/schema.sql
+mysql -u root -p < sql/data.sql
+2. Fichier de Configuration (src/main/resources/config.properties)
+Properties
+db.url=jdbc:mysql://localhost:3306/gestion_stages
+db.user=root
+db.password=root
+3. Compilation et Exécution
+Bash
 mvn clean package
-```
+java -jar target/gestion-stages-1.0-SNAPSHOT.jar
 
-### 4. Lancer
+---
 
+### 🟠 Option 3 : README Minimaliste & Clean (Concis & Direct)
+
+```markdown
+# 🎓 GestStage Java Console
+
+Plateforme de gestion globale des stages académiques et professionnels[cite: 1].
+
+## 🚀 Démarrage Rapide
+
+### Prérequis
+- JDK 11+
+- Maven
+- MySQL
+
+### Setup Base de Données
 ```bash
-java -jar target/gestion-stages-all.jar
-```
+mysql -u root -p < sql/schema.sql
+mysql -u root -p < sql/data.sql
+Configuration (config.properties)
+Properties
+db.url=jdbc:mysql://localhost:3306/gestion_stages
+db.user=root
+db.password=votre_mot_de_passe
+Lancement
+Bash
+mvn clean compile exec:java -Dexec.mainClass="com.gestion.stages.Main"
+🛠️ Architecture
+UI : com.gestion.stages.ui (Menus console interactifs)[cite: 1]
 
----
+Services : com.gestion.stages.service (Logique métier)[cite: 1]
 
-## Modules implémentés
+DAO : com.gestion.stages.dao (Requêtes SQL JDBC)[cite: 1]
 
-### 1. Gestion des Utilisateurs (ADMIN)
-- CRUD complet : créer ADMIN, ÉTUDIANT, ENTREPRISE, ENCADRANT
-- Modification, désactivation (suppression logique), suppression définitive
-- Recherche et filtrage par rôle
-- Réinitialisation de mot de passe (génération mot de passe temporaire)
-- Hachage SHA-256 + sel aléatoire (PasswordUtils)
-- Journaux de connexion (LogConnexionDAO)
-- Protection brute force (5 tentatives / 15 minutes)
+Modèles : com.gestion.stages.model (Entités & Enums)[cite: 1]
 
-### 2. Gestion des Étudiants
-- Profil complet (matricule, spécialité, niveau, CV, compétences, moyenne)
-- Recherche par spécialité, niveau, statut
-- Classement par moyenne
-- Score automatique calculé (moyenne + nombre de compétences)
-- Suggestions d'offres basées sur le profil
-- Génération CV PDF automatique (iText)
-
-### 3. Gestion des Entreprises
-- Profil entreprise avec validation admin obligatoire
-- Domaine d'activité, responsable RH
-- Notation des entreprises (note /5)
-- Classement par note
-
-### 4. Offres de Stage
-- Publication par l'entreprise (statut EN_ATTENTE)
-- Validation/rejet par l'admin
-- Expiration automatique selon date limite
-- Recherche multicritère (domaine, compétences, titre, entreprise)
-
-### 5. Candidatures
-- Postuler avec lettre de motivation
-- Détection de candidatures en doublon
-- Accepter / refuser par l'entreprise avec commentaire
-- Annulation par l'étudiant
-
-### 6. Suivi des Stages
-- Création du stage (lié à offre + encadrant)
-- Mise à jour automatique du statut étudiant
-- Soumission de rapport par l'étudiant
-- Évaluation par l'encadrant (/20) et l'entreprise (/20)
-- Note moyenne calculée
-- Validation finale par l'admin
-- Génération d'attestation PDF (iText)
-
-### 7. Exports
-- Étudiants → CSV et PDF (tableau formaté)
-- Offres de stage → CSV
-- Stages → CSV
-- Attestation de stage → PDF
-- CV étudiant → PDF
-
-### 8. Sécurité
-- Mots de passe hachés (SHA-256 + sel)
-- Validation force du mot de passe (8 chars min, 1 majuscule, 1 chiffre)
-- Protection contre les attaques brute force
-- Journaux de connexion (succès/échec)
-- Suppression logique (désactivation compte)
-
----
-
-## Rôles et permissions
-
-| Fonctionnalité                | ADMIN | ÉTUDIANT | ENTREPRISE | ENCADRANT |
-|-------------------------------|:-----:|:--------:|:----------:|:---------:|
-| Gérer les utilisateurs        |  ✅   |          |            |           |
-| Valider entreprises/offres    |  ✅   |          |            |           |
-| Statistiques globales         |  ✅   |          |            |           |
-| Voir/modifier son profil      |  ✅   |    ✅    |     ✅     |    ✅     |
-| Consulter offres disponibles  |       |    ✅    |            |           |
-| Postuler à une offre          |       |    ✅    |            |           |
-| Suggérer offres automatiques  |       |    ✅    |            |           |
-| Générer son CV PDF            |       |    ✅    |            |           |
-| Publier une offre             |       |          |     ✅     |           |
-| Gérer les candidatures        |       |          |     ✅     |           |
-| Évaluer un stage              |       |          |            |    ✅     |
-| Générer attestation           |       |          |            |    ✅     |
-
----
-
-## Dépendances Maven
-
-| Dépendance          | Version | Usage                    |
-|---------------------|---------|--------------------------|
-| mysql-connector-j   | 8.3.0   | Driver JDBC MySQL        |
-| itextpdf            | 5.5.13  | Génération PDF           |
-| commons-csv         | 1.10.0  | Export CSV (Apache)      |
+Utils : com.gestion.stages.util (Sécurité, Exports PDF)[cite: 1]
