@@ -1,0 +1,33 @@
+# Java
+*.class
+target/
+out/
+build/
+
+# Maven
+.mvn/
+!mvnw
+!mvnw.cmd
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
